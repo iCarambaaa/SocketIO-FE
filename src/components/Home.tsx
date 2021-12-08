@@ -31,9 +31,10 @@ const Home = () => {
   const [loggedIn, setLoggedIn] = useState(false)
   const [onlineUsers, setOnlineUsers] = useState<IUser[]>([])
   const [chatHistory, setChatHistory] = useState<IMessage[]>([])
+  const [room, setRoom] = useState<Room>('blue')
 
   // every time this component renders, a connection gets established to the server
-  // thanks to the io invocation at line 6
+  // thanks to the io invocation at line 8
 
   // for checking the established connection, we can listen to an event coming from the server
   // because the server is told to emit a "welcome" event every time a client connects
@@ -142,7 +143,14 @@ const Home = () => {
     }
   }
 
-  const [room, setRoom] = useState<Room>('blue')
+
+  const startPrivateChat = (id: string) => {
+    console.log("clicked", id)
+    console.log(onlineUsers)
+  }
+
+
+  
 
   return (
     <Container fluid className='px-4'>
@@ -172,7 +180,7 @@ const Home = () => {
                 <span className='mx-1'> | </span>
                 <span>{message.text}</span>
                 <span className='ml-2' style={{ fontSize: '0.7rem' }}>
-                  {new Date(message.timestamp).toLocaleTimeString('en-US')}
+                  {new Date(message.timestamp).toLocaleTimeString('de-DE')}
                 </span>
               </ListGroupItem>
             ))}
@@ -193,8 +201,9 @@ const Home = () => {
           <ListGroup>
             {onlineUsers.length === 0 && <ListGroupItem>No users yet!</ListGroupItem>}
             {onlineUsers.filter(user => user.room === room).map((user) => (
-              <ListGroupItem key={user.id}>{user.username}</ListGroupItem>
-            ))}
+            
+              <Button  variant="light" onClick={() => startPrivateChat(user.socketId)}   key={user.socketId}>{user.username} </Button>
+              ))}
           </ListGroup>
         </Col>
       </Row>
