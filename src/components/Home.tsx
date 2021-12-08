@@ -146,7 +146,8 @@ const Home = () => {
 
   const startPrivateChat = (id: string) => {
     console.log("clicked", id)
-    console.log(onlineUsers)
+    // console.log(onlineUsers)
+    
   }
 
 
