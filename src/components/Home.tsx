@@ -32,6 +32,7 @@ const Home = () => {
   const [onlineUsers, setOnlineUsers] = useState<IUser[]>([])
   const [chatHistory, setChatHistory] = useState<IMessage[]>([])
   const [room, setRoom] = useState<Room>('blue')
+  const [singleRecipient, setSingleRecipient] = useState<string | null>(null)
 
   // every time this component renders, a connection gets established to the server
   // thanks to the io invocation at line 8
@@ -116,7 +117,7 @@ const Home = () => {
       timestamp: Date.now(), // <-- ms expired 01/01/1970
     }
 
-    socket.emit('sendmessage', { message: newMessage, room: room })
+    socket.emit('sendmessage', { message: newMessage, room: singleRecipient ?? room }) //check here for private chat
     // this is sending my message to the server. I'm not receiving back my own message,
     // so I need to append it manually to my chat history.
     // but all the other connected clients are going to receive it back from the server!
@@ -147,7 +148,7 @@ const Home = () => {
   const startPrivateChat = (id: string) => {
     console.log("clicked", id)
     // console.log(onlineUsers)
-    
+    setSingleRecipient(id)
   }
 
 
@@ -167,11 +168,21 @@ const Home = () => {
               onChange={(e) => setUsername(e.target.value)}
               disabled={loggedIn}
             />
-            <Button
-              className="ml-2"
-              variant={room === "blue" ? "primary" : "danger"}
-              onClick={() => setRoom(room === "blue" ? "red" : "blue")}
-            >Room</Button>
+                    {
+              !singleRecipient
+                ?
+                <Button
+                  className="ml-2"
+                  variant={room === "blue" ? "primary" : "danger"}
+                  onClick={() => setRoom(room === "blue" ? "red" : "blue")}
+                >Room</Button>
+                :
+                <Button
+                  className="ml-2"
+                  variant={"secondary"}
+                  onClick={() => setSingleRecipient(null)}
+                >Back to the previous room
+                </Button>}
           </Form>
           {/* MIDDLE SECTION: CHAT HISTORY */}
           <ListGroup>
